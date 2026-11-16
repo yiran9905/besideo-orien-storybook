@@ -118,6 +118,12 @@
   border-color: #d1c2ab;
   box-shadow: inset 0 0 0 1px #fff9, inset 3px 0 8px #8b76521a;
 }
+.back-content h2 {
+  font: 700 clamp(24px, 7.2cqw, 31px)/1.13 Inter, sans-serif;
+  letter-spacing: -.025em;
+}
+.back-signoff { font: 400 13px/1.4 Inter, sans-serif; }
+.page-folio { font: 500 10px/1 Inter, sans-serif; }
 
 /* A few diffuse sunlit specks remain in the background, away from the text. */
 .world-wash:before {
