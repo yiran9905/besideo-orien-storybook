@@ -43,9 +43,10 @@
 }
 
 /* A short opening vignette: the page tips into perspective while a meadow rises. */
-.softbook-mount { position: relative; transform-origin: 50% 92%; transform-style: preserve-3d; }
-.book-placement[data-kind=spread] .softbook-mount,
-.book-placement[data-kind=story] .softbook-mount {
+.softbook-mount { position: relative; transform-style: preserve-3d; }
+.book-placement[data-kind=spread],
+.book-placement[data-kind=story] {
+  transform-origin: 50% 92%;
   animation: book-meadow-open 4.4s cubic-bezier(.2,.62,.2,1) both;
 }
 .softbook-mount:before,
@@ -109,7 +110,7 @@
   .softbook-mount:after { width: clamp(235px, 78%, 310px); bottom: 14%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .book-placement[data-kind=spread] .softbook-mount,
-  .book-placement[data-kind=story] .softbook-mount { animation: none; }
+  .book-placement[data-kind=spread],
+  .book-placement[data-kind=story] { animation: none; }
   .softbook-mount:before, .softbook-mount:after { display: none !important; }
 }
