@@ -42,8 +42,12 @@
     transparent 95%, #fff7);
 }
 
-/* Contact shadow and foliage lift from the foot of the open book's fold. */
-.softbook-mount { position: relative; }
+/* A short opening vignette: the page tips into perspective while a meadow rises. */
+.softbook-mount { position: relative; transform-origin: 50% 92%; transform-style: preserve-3d; }
+.book-placement[data-kind=spread] .softbook-mount,
+.book-placement[data-kind=story] .softbook-mount {
+  animation: book-meadow-open 4.4s cubic-bezier(.2,.62,.2,1) both;
+}
 .softbook-mount:before,
 .softbook-mount:after {
   content: "";
@@ -55,40 +59,50 @@
 }
 .softbook-mount:before {
   z-index: 11;
-  bottom: -1px;
-  width: clamp(145px, 32%, 270px);
-  height: 22px;
+  bottom: 20%;
+  width: clamp(200px, 55%, 440px);
+  height: 35px;
   border-radius: 50%;
-  background: radial-gradient(ellipse, #31432d69 0%, #4c5b3926 45%, transparent 75%);
-  transform: translateX(-50%) rotateX(50deg);
-  filter: blur(3px);
+  background: radial-gradient(ellipse, #31432d6b 0%, #4c5b3928 45%, transparent 75%);
+  transform: translateX(-50%) rotateX(55deg);
+  filter: blur(5px);
+  animation: meadow-shadow 4.4s ease both;
 }
 .softbook-mount:after {
   z-index: 12;
-  bottom: -14px;
-  width: clamp(180px, 36%, 300px);
+  bottom: 18%;
+  width: clamp(250px, 62%, 490px);
   aspect-ratio: 1920 / 819;
   background: url('./living-meadow-growth-v01.png') center bottom / contain no-repeat;
-  filter: drop-shadow(0 5px 3px #293b2459);
-  transform: translateX(-50%) perspective(700px) rotateX(-8deg);
-  animation: meadow-rise 1.7s cubic-bezier(.18,.72,.22,1) both;
-  transition: opacity .22s ease;
+  filter: drop-shadow(0 10px 5px #293b2460);
+  transform: translateX(-50%);
+  animation: meadow-rise 4.4s cubic-bezier(.18,.72,.22,1) both;
 }
 .book-placement[data-kind=spread] .softbook-mount:before,
 .book-placement[data-kind=spread] .softbook-mount:after,
 .book-placement[data-kind=story] .softbook-mount:before,
 .book-placement[data-kind=story] .softbook-mount:after { display: block; }
-.book-placement[data-turning=true] .softbook-mount:after { opacity: .28; }
+@keyframes book-meadow-open {
+  0%, 30% { transform: perspective(1200px) rotateX(19deg); }
+  100% { transform: perspective(1200px) rotateX(0); }
+}
+@keyframes meadow-shadow {
+  0%, 8% { opacity: 0; }
+  25%, 55% { opacity: .8; }
+  100% { opacity: 0; }
+}
 @keyframes meadow-rise {
-  0% { opacity: 0; transform: translateX(-50%) perspective(700px) rotateX(75deg) scale(.84,.35); }
-  22% { opacity: .7; }
-  72% { opacity: 1; transform: translateX(-50%) perspective(700px) rotateX(-15deg) scale(1.025); }
-  100% { opacity: 1; transform: translateX(-50%) perspective(700px) rotateX(-8deg) scale(1); }
+  0%, 5% { opacity: 0; transform: translateX(-50%) perspective(700px) rotateX(75deg) scale(.8,.12); }
+  18% { opacity: .8; }
+  38%, 56% { opacity: 1; transform: translateX(-50%) perspective(700px) rotateX(-16deg) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) perspective(700px) rotateX(-4deg) scale(.94); }
 }
 @media (max-width: 600px) {
-  .softbook-mount:before { width: 145px; height: 17px; }
-  .softbook-mount:after { width: clamp(145px, 46%, 170px); bottom: -12px; }
+  .softbook-mount:before { width: 230px; height: 25px; bottom: 16%; }
+  .softbook-mount:after { width: clamp(235px, 78%, 310px); bottom: 14%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .softbook-mount:after { animation: none; transition: none; }
+  .book-placement[data-kind=spread] .softbook-mount,
+  .book-placement[data-kind=story] .softbook-mount { animation: none; }
+  .softbook-mount:before, .softbook-mount:after { display: none !important; }
 }
