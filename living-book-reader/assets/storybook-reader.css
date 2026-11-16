@@ -27,14 +27,6 @@
   letter-spacing: .04em;
   text-shadow: 0 1px 6px #fff;
 }
-.reading-hint {
-  margin: 0;
-  color: #6c675c;
-  font: 400 10px/1.4 Inter, sans-serif;
-  letter-spacing: .015em;
-  text-align: center;
-  text-shadow: 0 1px 6px #fff;
-}
 /* The arrows are visually absent; keyboard/screen-reader navigation remains. */
 .reader-controls .page-button {
   position: absolute;
