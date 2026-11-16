@@ -59,14 +59,16 @@
 }
 .softbook-mount:before {
   z-index: 11;
-  bottom: 20%;
-  width: clamp(200px, 55%, 440px);
-  height: 35px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, #31432d6b 0%, #4c5b3928 45%, transparent 75%);
-  transform: translateX(-50%) rotateX(55deg);
-  filter: blur(5px);
-  animation: meadow-shadow 4.4s ease both;
+  inset: 0;
+  border-radius: 3px;
+  background:
+    radial-gradient(ellipse 27% 5% at 50% 80%, #31432d65, #4c5b3920 60%, transparent),
+    linear-gradient(90deg, transparent 47%, #715b3c18 49.5%, #fff9 50%, #715b3c18 50.5%, transparent 53%),
+    linear-gradient(#faf4e72e, #faf4e72e),
+    url('/besideo-orien-storybook/living-book/assets/paper-stock.webp') center / 600px 750px,
+    #f8f1e3;
+  box-shadow: inset 0 0 0 1px #bfa98545;
+  animation: meadow-paper 4.4s ease both;
 }
 .softbook-mount:after {
   z-index: 12;
@@ -86,9 +88,8 @@
   0%, 30% { transform: perspective(1200px) rotateX(19deg); }
   100% { transform: perspective(1200px) rotateX(0); }
 }
-@keyframes meadow-shadow {
-  0%, 8% { opacity: 0; }
-  25%, 55% { opacity: .8; }
+@keyframes meadow-paper {
+  0%, 60% { opacity: 1; }
   100% { opacity: 0; }
 }
 @keyframes meadow-rise {
@@ -98,7 +99,13 @@
   100% { opacity: 0; transform: translateX(-50%) perspective(700px) rotateX(-4deg) scale(.94); }
 }
 @media (max-width: 600px) {
-  .softbook-mount:before { width: 230px; height: 25px; bottom: 16%; }
+  .softbook-mount:before {
+    background:
+      radial-gradient(ellipse 34% 4% at 50% 84%, #31432d65, #4c5b3920 60%, transparent),
+      linear-gradient(#faf4e72e, #faf4e72e),
+      url('/besideo-orien-storybook/living-book/assets/paper-stock.webp') center / 600px 750px,
+      #f8f1e3;
+  }
   .softbook-mount:after { width: clamp(235px, 78%, 310px); bottom: 14%; }
 }
 @media (prefers-reduced-motion: reduce) {
