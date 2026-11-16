@@ -1,0 +1,150 @@
+/* An ivory clothbound reader: the book is the focal point, the meadow stays quiet. */
+.header-actions { display: none; }
+.site-header { height: 68px; flex-basis: 68px; padding-block: 14px; }
+.reader { padding-bottom: 20px; }
+.story-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 5px;
+  color: #655a4b;
+  font: 500 11px/1.4 Inter, sans-serif;
+  letter-spacing: .045em;
+  text-shadow: 0 1px 5px #ffffffe6;
+}
+.book-stage { height: min(650px, calc(100dvh - 200px)); padding-block: 4px 18px; }
+.reader-controls {
+  height: 24px;
+  flex: 0 0 24px;
+  margin-top: 2px;
+  gap: 0;
+}
+.page-status {
+  min-width: 0;
+  color: #5d584b;
+  font: 500 11px/1.4 Inter, sans-serif;
+  letter-spacing: .04em;
+  text-shadow: 0 1px 6px #fff;
+}
+.reading-hint {
+  margin: 0;
+  color: #6c675c;
+  font: 400 10px/1.4 Inter, sans-serif;
+  letter-spacing: .015em;
+  text-align: center;
+  text-shadow: 0 1px 6px #fff;
+}
+/* The arrows are visually absent; keyboard/screen-reader navigation remains. */
+.reader-controls .page-button {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
+}
+.reader-controls .page-button:focus-visible {
+  position: fixed;
+  z-index: 50;
+  bottom: 16px;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  clip-path: none;
+  overflow: visible;
+  border: 1px solid #c4b49d;
+  background: #fffaf0;
+  outline: 2px solid #9b7e59;
+}
+.reader-controls .page-button:first-child:focus-visible { left: 16px; }
+.reader-controls .page-button:last-child:focus-visible { right: 16px; }
+.read-again {
+  min-height: 32px;
+  font: 500 11px/1.4 Inter, sans-serif;
+  color: #5d584b;
+  text-shadow: 0 1px 6px #fff;
+}
+
+/* A warm linen board, paper block, and a soft shared fold; no colored outer shell. */
+.book-placement:before {
+  top: 2px;
+  left: -4px;
+  right: -4px;
+  bottom: -12px;
+  border-radius: 3px 3px 7px 7px;
+  background: linear-gradient(180deg, #f8f2e6 0%, #eee4d3 75%, #d4c7b2 100%);
+  box-shadow: inset 0 -1px 1px #aa977b80, inset 0 1px 1px #fff,
+    0 3px 5px #4c402b20, 0 14px 25px -9px #443b2e50,
+    0 30px 48px -20px #4b45395a;
+}
+.book-placement:after,
+.book-placement:not(.book-placement--wide):after {
+  top: 2px;
+  left: -2px;
+  right: -2px;
+  bottom: -8px;
+  border-radius: 2px 2px 5px 5px;
+  background:
+    linear-gradient(90deg, #a88d6950, transparent 2%, transparent 45%,
+      #89745928 49.5%, #fffdf1aa 50%, #89745928 50.5%, transparent 55%,
+      transparent 98%, #a88d6945),
+    repeating-linear-gradient(0deg, #8d765812 0 .5px, transparent .5px 2px),
+    linear-gradient(180deg, #fbf7ebd6 0%, #f6eedfd0 91%, #d7c9b2ad 100%),
+    url('/besideo-orien-storybook/living-book/assets/paper-stock.webp') center / 600px 750px,
+    #f2eadc;
+  box-shadow: inset 1px 0 1px #fff9, inset -1px 0 1px #90785c28,
+    inset 0 -1px 0 #c5b69c80, 0 1px 1px #74634b30;
+}
+.book-placement--wide[data-kind=back]:before,
+.book-placement--wide[data-kind=back]:after { left: 0; right: 50%; }
+.book-placement--wide:has(.stf__block[data-cover-turn=back]):before,
+.book-placement--wide:has(.stf__block[data-cover-turn=back]):after { left: 0; right: 50%; }
+.book-placement--wide .softbook-leaf.--left .paper-page:before {
+  background: linear-gradient(90deg, #fff5, transparent 5%, transparent 88%, #78634526 98%, #725c4030 100%);
+}
+.book-placement--wide .softbook-leaf.--right .paper-page:before {
+  background: linear-gradient(90deg, #725c4030, #78634526 2%, transparent 12%, transparent 95%, #fff5);
+}
+.hard-cover {
+  border-color: #d1c2ab;
+  box-shadow: inset 0 0 0 1px #fff9, inset 3px 0 8px #8b76521a;
+}
+
+/* A few diffuse sunlit specks remain in the background, away from the text. */
+.world-wash:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle 2px at 11% 34%, #fffbe6d4 0%, #fff6cd30 70%, transparent 100%),
+    radial-gradient(circle 3px at 21% 72%, #fff8dfb8 0%, #fff2bb30 62%, transparent 100%),
+    radial-gradient(circle 2px at 88% 42%, #fffae7d0 0%, #fff3c933 70%, transparent 100%),
+    radial-gradient(circle 2px at 92% 78%, #fffce9c0 0%, #fff4d130 70%, transparent 100%),
+    radial-gradient(circle 2px at 9% 85%, #fffceac0 0%, #fff4d12b 70%, transparent 100%);
+  animation: meadow-light 14s ease-in-out infinite alternate;
+}
+.world-wash:after {
+  background: radial-gradient(ellipse 42% 34% at 82% 17%, #fff2da2e, transparent 75%);
+}
+@keyframes meadow-light {
+  0% { opacity: .25; transform: translateY(4px); }
+  100% { opacity: .7; transform: translateY(-7px); }
+}
+@media (max-width: 819px), (max-height: 519px) {
+  .site-header { height: 62px; flex-basis: 62px; }
+  .story-meta { font-size: 10px; margin-bottom: 3px; }
+  .book-stage {
+    height: min(calc((100vw - 40px) / var(--book-ratio) + 34px), calc(100dvh - 190px));
+    min-height: 400px;
+    padding-block: 4px 16px;
+  }
+  .reader { padding-bottom: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-wash:before { animation: none; opacity: .35; }
+}
