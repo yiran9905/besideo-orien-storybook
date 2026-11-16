@@ -89,15 +89,20 @@
   bottom: -8px;
   border-radius: 2px 2px 5px 5px;
   background:
-    linear-gradient(90deg, #a88d6950, transparent 2%, transparent 45%,
+    var(--page-edge-shading, linear-gradient(90deg, #a88d6950, transparent 2%, transparent 45%,
       #89745928 49.5%, #fffdf1aa 50%, #89745928 50.5%, transparent 55%,
-      transparent 98%, #a88d6945),
+      transparent 98%, #a88d6945)),
     repeating-linear-gradient(0deg, #8d765812 0 .5px, transparent .5px 2px),
     linear-gradient(180deg, #fbf7ebd6 0%, #f6eedfd0 91%, #d7c9b2ad 100%),
     url('/besideo-orien-storybook/living-book/assets/paper-stock.webp') center / 600px 750px,
     #f2eadc;
   box-shadow: inset 1px 0 1px #fff9, inset -1px 0 1px #90785c28,
     inset 0 -1px 0 #c5b69c80, 0 1px 1px #74634b30;
+}
+.book-placement:not(.book-placement--wide),
+.book-placement--wide[data-kind=back],
+.book-placement--wide:has(.stf__block[data-cover-turn=back]) {
+  --page-edge-shading: linear-gradient(90deg, #a88d6950, transparent 5%, transparent 95%, #a88d6945);
 }
 .book-placement--wide[data-kind=back]:before,
 .book-placement--wide[data-kind=back]:after { left: 0; right: 50%; }
