@@ -1,0 +1,98 @@
+/* Shared binding and growing meadow detail. Story data never enters this layer. */
+.book-placement:before {
+  top: 2px;
+  left: -5px;
+  right: -5px;
+  bottom: -18px;
+  border-radius: 4px 4px 11px 11px;
+  background: linear-gradient(180deg, #75876b 0%, #53694f 78%, #415740 100%);
+  box-shadow: 0 2px 2px #3d30212b, 0 12px 22px -9px #302a1f65,
+    0 28px 50px -18px #28392c6b, inset 0 -2px 1px #263d30a8;
+}
+
+.book-placement:after,
+.book-placement:not(.book-placement--wide):after {
+  top: 2px;
+  left: -2px;
+  right: -2px;
+  bottom: -13px;
+  border-radius: 3px 3px 9px 9px;
+  background:
+    linear-gradient(90deg, #a2886026, transparent 8%, transparent 42%,
+      #856b4850 49.3%, #f9efd71a 50%, #8f79523a 50.7%, transparent 58%,
+      transparent 93%, #806a4b30),
+    repeating-linear-gradient(0deg, #ded2b9 0 1px, #f4ead8 1px 2px,
+      #cab99d 2px 2.5px, #f8f0df 2.5px 4px);
+  box-shadow: inset 1px 0 2px #fff9, inset -1px 0 2px #775f3a40,
+    0 2px 2px #3f331e35;
+}
+
+/* The book's existing cover/back positioning still determines which half has depth. */
+.book-placement--wide[data-kind=cover]:before,
+.book-placement--wide[data-kind=cover]:after { left: 50%; }
+.book-placement--wide[data-kind=back]:before,
+.book-placement--wide[data-kind=back]:after { right: 50%; }
+.book-placement--wide:has(.stf__block[data-cover-turn=back]):before,
+.book-placement--wide:has(.stf__block[data-cover-turn=back]):after { left: 0; right: 50%; }
+.book-placement--wide:has(.stf__block[data-cover-turn=front]):before,
+.book-placement--wide:has(.stf__block[data-cover-turn=front]):after { left: 50%; right: 0; }
+
+.book-placement--wide .softbook-leaf.--left .paper-page:before {
+  background: linear-gradient(90deg, #fff7, transparent 5%, transparent 86%,
+    #8e75562b 96%, #654e3838 100%);
+}
+.book-placement--wide .softbook-leaf.--right .paper-page:before {
+  background: linear-gradient(90deg, #654e3838, #8e75562b 4%, transparent 14%,
+    transparent 95%, #fff7);
+}
+
+/* Pseudo-elements are decorative, leave the interactive pages and text alone. */
+.softbook-mount { position: relative; }
+.softbook-mount:before,
+.softbook-mount:after {
+  content: "";
+  position: absolute;
+  z-index: 12;
+  bottom: -10px;
+  width: clamp(66px, 12%, 120px);
+  aspect-ratio: 3 / 4;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center bottom;
+  filter: drop-shadow(0 3px 2px #273b253d);
+  transform-origin: 50% 95%;
+  animation: meadow-unfurl 1.25s cubic-bezier(.2,.65,.25,1) both,
+    meadow-sway 8s ease-in-out 1.25s infinite alternate;
+}
+.softbook-mount:before { left: -5%; background-image: url('./growth-left.svg'); }
+.softbook-mount:after {
+  right: -5%;
+  background-image: url('./growth-right.svg');
+  animation-duration: 1.45s, 9.5s;
+  animation-delay: .12s, 1.6s;
+}
+
+.book-placement--wide[data-kind=cover] .softbook-mount:before { left: 46%; }
+.book-placement--wide[data-kind=back] .softbook-mount:after { right: 46%; }
+.book-placement--wide:has(.stf__block[data-cover-turn=back]) .softbook-mount:before { left: -5%; }
+.book-placement--wide:has(.stf__block[data-cover-turn=back]) .softbook-mount:after { right: 46%; }
+.book-placement--wide:has(.stf__block[data-cover-turn=front]) .softbook-mount:before { left: 46%; }
+.book-placement--wide:has(.stf__block[data-cover-turn=front]) .softbook-mount:after { right: -5%; }
+
+@keyframes meadow-unfurl {
+  from { opacity: 0; transform: translateY(8px) scale(.82,.65); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes meadow-sway {
+  from { transform: rotate(-1.3deg); }
+  to { transform: rotate(1.3deg); }
+}
+@media (max-width: 600px) {
+  .softbook-mount:before, .softbook-mount:after { width: clamp(55px, 18%, 76px); bottom: -8px; }
+  .softbook-mount:before { left: -6%; }
+  .softbook-mount:after { right: -6%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .softbook-mount:before, .softbook-mount:after { animation: none; }
+}

@@ -1,0 +1,109 @@
+{
+  "id": "orien-2026-11-12",
+  "petName": "Orien",
+  "title": "A little leaf,\na lovely day",
+  "date": "2026-11-12",
+  "location": "Hearthlight Hollow",
+  "coverImage": {
+    "src": "/assets/01-discovery.webp",
+    "alt": "Orien and the orange cat discover a green leaf on a stone.",
+    "width": 752,
+    "height": 560
+  },
+  "pages": [
+    {
+      "id": "01-discovery",
+      "title": "A leaf on a stone",
+      "paragraphs": [
+        "Orien found a green leaf resting on a sunny stone.",
+        "The orange cat came over. What could it become?"
+      ],
+      "image": {
+        "src": "/assets/01-discovery.webp",
+        "spreadGutter": 0.14,
+        "alt": "Orien and the orange cat discover a green leaf on a stone.",
+        "width": 752,
+        "height": 560
+      }
+    },
+    {
+      "id": "02-stream",
+      "title": "A little boat",
+      "paragraphs": [
+        "The leaf slipped away into the little stream.",
+        "The cat reached out a paw, but it sailed on."
+      ],
+      "image": {
+        "src": "/assets/02-stream.webp",
+        "spreadGutter": 0.89,
+        "alt": "The cat reaches toward a leaf floating in the stream as Orien watches.",
+        "width": 752,
+        "height": 560
+      }
+    },
+    {
+      "id": "03-bridge",
+      "title": "Across the bridge",
+      "paragraphs": [
+        "Across the wooden bridge they hurried side by side.",
+        "Below them, their leaf boat bobbed along the stream."
+      ],
+      "image": {
+        "src": "/assets/03-bridge.webp",
+        "spreadGutter": 0.17,
+        "alt": "Orien and the cat cross a wooden bridge after the leaf.",
+        "width": 752,
+        "height": 560
+      }
+    },
+    {
+      "id": "04-catch",
+      "title": "The leaf comes to rest",
+      "paragraphs": [
+        "At last, the leaf boat came to rest on a stone.",
+        "The cat caught it with a paw. Orien leaned in to look."
+      ],
+      "image": {
+        "src": "/assets/04-catch.webp",
+        "alt": "The cat touches the leaf on a stone while Orien watches.",
+        "width": 752,
+        "height": 560
+      }
+    },
+    {
+      "id": "05-play",
+      "title": "A little game",
+      "paragraphs": [
+        "Beneath the big tree, the cat tapped the leaf.",
+        "Orien reached out a paw, and their little game began."
+      ],
+      "image": {
+        "src": "/assets/05-play.webp",
+        "alt": "Orien and the cat play with the leaf beside the big tree.",
+        "width": 752,
+        "height": 560
+      }
+    },
+    {
+      "id": "06-rest",
+      "title": "Under the stars",
+      "paragraphs": [
+        "When the stars came out, they curled up by the tree.",
+        "Their leaf lay close beside them, a little boat at rest."
+      ],
+      "image": {
+        "src": "/assets/06-rest.webp",
+        "spreadGutter": 0.13,
+        "alt": "Orien and the cat rest beside the leaf beneath the tree at night.",
+        "width": 752,
+        "height": 560
+      }
+    }
+  ],
+  "app": {
+    "name": "Besideo",
+    "icon": "/assets/besideo-app-icon.png",
+    "ios": "https://apps.apple.com/us/app/besideo/id6767787730",
+    "android": "https://play.google.com/store/apps/details?id=com.californialedfire.besideo"
+  }
+}

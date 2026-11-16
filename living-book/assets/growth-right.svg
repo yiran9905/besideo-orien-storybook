@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 240">
+  <defs>
+    <linearGradient id="leaf" x1="1" y1="1" x2="0" y2="0"><stop stop-color="#38573b"/><stop offset=".58" stop-color="#79985b"/><stop offset="1" stop-color="#b8c382"/></linearGradient>
+    <radialGradient id="petal"><stop stop-color="#fffef5"/><stop offset="1" stop-color="#e1ddc3"/></radialGradient>
+  </defs>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M38 233 C65 205 77 174 86 138 C97 94 115 74 138 53" stroke="#3f603d" stroke-width="4"/>
+    <path d="M37 232 C42 192 42 154 34 122 C28 104 20 91 13 78" stroke="#6c8854" stroke-width="3"/>
+    <path d="M39 232 C67 216 92 199 125 191" stroke="#657d4c" stroke-width="3"/>
+    <path d="M39 230 C57 205 74 198 93 177" stroke="#78935d" stroke-width="2.4"/>
+  </g>
+  <g fill="url(#leaf)" stroke="#526d43" stroke-width="1.1">
+    <path d="M87 137 C109 138 125 126 128 109 C108 107 93 117 87 137Z"/>
+    <path d="M97 107 C85 85 88 67 101 58 C112 73 110 91 97 107Z"/>
+    <path d="M119 73 C140 73 154 62 156 47 C138 45 124 55 119 73Z"/>
+    <path d="M67 191 C88 194 102 187 109 172 C91 167 76 175 67 191Z"/>
+    <path d="M40 170 C20 161 12 148 15 133 C31 136 41 150 40 170Z"/>
+    <path d="M35 128 C47 112 47 96 38 86 C27 97 26 113 35 128Z"/>
+    <path d="M24 100 C9 96 4 84 7 73 C18 76 25 87 24 100Z"/>
+  </g>
+  <g fill="none" stroke="#c8d6a0" stroke-width=".9" opacity=".65">
+    <path d="M89 136 Q108 119 124 112 M97 105 Q101 80 101 62 M121 72 Q140 56 152 50 M68 190 Q90 180 104 175 M39 168 Q26 150 18 137 M35 126 Q37 104 38 90"/>
+  </g>
+  <g transform="translate(127 190)">
+    <g fill="url(#petal)"><ellipse cy="-8" rx="3.3" ry="7"/><ellipse cy="8" rx="3.3" ry="7"/><ellipse cx="-8" rx="7" ry="3.3"/><ellipse cx="8" rx="7" ry="3.3"/><ellipse transform="rotate(45)" cy="-8" rx="3.3" ry="7"/><ellipse transform="rotate(45)" cy="8" rx="3.3" ry="7"/><ellipse transform="rotate(-45)" cy="-8" rx="3.3" ry="7"/><ellipse transform="rotate(-45)" cy="8" rx="3.3" ry="7"/></g>
+    <circle r="4" fill="#d7ab49"/>
+  </g>
+  <g transform="translate(94 176) scale(.62)">
+    <g fill="url(#petal)"><ellipse cy="-8" rx="3.5" ry="7"/><ellipse cy="8" rx="3.5" ry="7"/><ellipse cx="-8" rx="7" ry="3.5"/><ellipse cx="8" rx="7" ry="3.5"/><ellipse transform="rotate(45)" cy="-8" rx="3.5" ry="7"/><ellipse transform="rotate(45)" cy="8" rx="3.5" ry="7"/><ellipse transform="rotate(-45)" cy="-8" rx="3.5" ry="7"/><ellipse transform="rotate(-45)" cy="8" rx="3.5" ry="7"/></g>
+    <circle r="4" fill="#d4a546"/>
+  </g>
+</svg>
