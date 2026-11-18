@@ -90,25 +90,53 @@
     <svg class="pd-ribbon" viewBox="0 0 402 874" aria-hidden="true">
       <defs>
         <linearGradient id="pastel-spectrum" x1="0%" x2="100%" y1="50%" y2="50%">
-          <stop offset="0" stop-color="#F9C7D1" stop-opacity="0"/>
-          <stop offset=".11" stop-color="#F9C7D1" stop-opacity="0"/>
-          <stop offset=".13" stop-color="#F9C7D1" stop-opacity=".12"/>
-          <stop offset=".22" stop-color="#F9CAD2" stop-opacity=".88"/>
-          <stop offset=".34" stop-color="#FFDDC3" stop-opacity=".83"/>
-          <stop offset=".45" stop-color="#FFEEB9" stop-opacity=".66"/>
-          <stop offset=".55" stop-color="#E0F1D8" stop-opacity=".66"/>
-          <stop offset=".65" stop-color="#C2EAEA" stop-opacity=".83"/>
-          <stop offset=".74" stop-color="#C4E2FB" stop-opacity=".94"/>
-          <stop offset=".82" stop-color="#DDD5F6" stop-opacity=".86"/>
-          <stop offset=".88" stop-color="#E6D5F4" stop-opacity=".12"/>
-          <stop offset=".89" stop-color="#E6D5F4" stop-opacity="0"/>
-          <stop offset="1" stop-color="#E6D5F4" stop-opacity="0"/>
+          <stop offset="0.00" stop-color="#F9C7D1"/>
+          <stop offset="0.05" stop-color="#F9C7D1"/>
+          <stop offset="0.10" stop-color="#F9C7D1"/>
+          <stop offset="0.15" stop-color="#F9C8D1"/>
+          <stop offset="0.20" stop-color="#F9C9D2"/>
+          <stop offset="0.25" stop-color="#FACFCE"/>
+          <stop offset="0.30" stop-color="#FDD7C8"/>
+          <stop offset="0.35" stop-color="#FFDFC2"/>
+          <stop offset="0.40" stop-color="#FFE6BE"/>
+          <stop offset="0.45" stop-color="#FFEEB9"/>
+          <stop offset="0.50" stop-color="#F0F0C8"/>
+          <stop offset="0.55" stop-color="#E0F1D8"/>
+          <stop offset="0.60" stop-color="#D1EEE1"/>
+          <stop offset="0.65" stop-color="#C2EAEA"/>
+          <stop offset="0.70" stop-color="#C3E6F3"/>
+          <stop offset="0.75" stop-color="#C7E0FA"/>
+          <stop offset="0.80" stop-color="#D7D8F7"/>
+          <stop offset="0.85" stop-color="#E2D5F5"/>
+          <stop offset="0.90" stop-color="#E6D5F4"/>
+          <stop offset="0.95" stop-color="#E6D5F4"/>
+          <stop offset="1.00" stop-color="#E6D5F4"/>
         </linearGradient>
+        <linearGradient id="arc-opacity" x1="0%" x2="100%" y1="50%" y2="50%">
+          <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+          <stop offset="0.11" stop-color="#FFFFFF" stop-opacity="0"/>
+          <stop offset="0.13" stop-color="#FFFFFF" stop-opacity="0.12"/>
+          <stop offset="0.22" stop-color="#FFFFFF" stop-opacity="0.88"/>
+          <stop offset="0.34" stop-color="#FFFFFF" stop-opacity="0.83"/>
+          <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.66"/>
+          <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.66"/>
+          <stop offset="0.65" stop-color="#FFFFFF" stop-opacity="0.83"/>
+          <stop offset="0.74" stop-color="#FFFFFF" stop-opacity="0.94"/>
+          <stop offset="0.82" stop-color="#FFFFFF" stop-opacity="0.86"/>
+          <stop offset="0.88" stop-color="#FFFFFF" stop-opacity="0.12"/>
+          <stop offset="0.89" stop-color="#FFFFFF" stop-opacity="0"/>
+          <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+        </linearGradient>
+        <mask id="arc-end-fade" maskUnits="userSpaceOnUse" x="0" y="660" width="402" height="155">
+          <rect x="4" y="660" width="395" height="155" fill="url(#arc-opacity)"/>
+        </mask>
         <filter id="soft-arc-edge" x="-5%" y="-8%" width="110%" height="116%">
           <feGaussianBlur stdDeviation="2"/>
         </filter>
       </defs>
-      <path d="M4 799.75 C34.04 720.08 113.03 667 201.5 667 C289.97 667 368.96 720.08 399 799.75 L374.52 808.21 C348.20 738.43 279.01 691.90 201.5 691.90 C123.99 691.90 54.80 738.43 28.49 808.21 Z" fill="url(#pastel-spectrum)" filter="url(#soft-arc-edge)"/>
+      <g filter="url(#soft-arc-edge)">
+        <path d="M4 799.75 C34.04 720.08 113.03 667 201.5 667 C289.97 667 368.96 720.08 399 799.75 L374.52 808.21 C348.20 738.43 279.01 691.90 201.5 691.90 C123.99 691.90 54.80 738.43 28.49 808.21 Z" fill="url(#pastel-spectrum)" mask="url(#arc-end-fade)"/>
+      </g>
     </svg>
     <div class="pd-avatars"></div>
     <span class="sr-only" role="status"></span>
@@ -125,6 +153,7 @@
   const counter = root.querySelector('[role="status"]');
   const result = root.querySelector('.pd-result');
   const avatars = root.querySelector('.pd-avatars');
+  const spectrumStops = Array.from(root.querySelector('#pastel-spectrum').children);
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const wrap = n => ((n % pets.length) + pets.length) % pets.length;
   const canvasWidth = 402;
@@ -141,7 +170,8 @@
   const tailPitch = 35;
   const tailDrop = 43;
   const slotOffset = .5;
-  let center = 1;
+  const initialCenter = 1;
+  let center = initialCenter;
   let position = center;
   let lastVisited = -1;
   let motionFrame = 0;
@@ -149,6 +179,7 @@
   let hintTimer;
   let drag = null;
   let suppressClick = false;
+  let paintedPhase;
 
   const buttons = pets.map((pet, index) => {
     const button = document.createElement('button');
@@ -205,7 +236,31 @@
     return Math.sign(x) * (low + high) / 2;
   }
 
+  const sourceColors = [[0.0,[249,199,209]],[0.11,[249,199,209]],[0.13,[249,199,209]],[0.22,[249,202,210]],[0.34,[255,221,195]],[0.45,[255,238,185]],[0.55,[224,241,216]],[0.65,[194,234,234]],[0.74,[196,226,251]],[0.82,[221,213,246]],[0.88,[230,213,244]],[0.89,[230,213,244]],[1.0,[230,213,244]]];
+  const designBounds = {left:0, width:canvasWidth};
+  const arcPhase = fraction => projectPointer(4 + 395 * fraction, designBounds);
+  const palette = sourceColors.map(([fraction, color]) => ({phase:arcPhase(fraction), color}));
+  const firstColor = palette[0];
+  palette.push({phase:firstColor.phase + pets.length, color:firstColor.color});
+  const visiblePhases = spectrumStops.map((_, index) => arcPhase(index / (spectrumStops.length - 1)));
+
+  function updateColor() {
+    const offset = wrap(position - initialCenter);
+    if (paintedPhase === offset) return;
+    paintedPhase = offset;
+    spectrumStops.forEach((stop, index) => {
+      const phase = firstColor.phase + wrap(visiblePhases[index] + offset - firstColor.phase);
+      const endIndex = palette.findIndex(mark => mark.phase > phase);
+      const end = palette[endIndex < 1 ? palette.length - 1 : endIndex];
+      const start = palette[endIndex < 1 ? palette.length - 2 : endIndex - 1];
+      const progress = (phase - start.phase) / (end.phase - start.phase);
+      const channels = start.color.map((value, channel) => Math.round(value + (end.color[channel] - value) * progress));
+      stop.setAttribute('stop-color', 'rgb(' + channels.join(',') + ')');
+    });
+  }
+
   function update() {
+    updateColor();
     buttons.forEach((button, index) => {
       const relative = wrap(index - position - slotOffset + pets.length / 2) - pets.length / 2;
       const distance = Math.abs(relative);
