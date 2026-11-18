@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Besideo Portrait · 开放弧形试玩</title>
+<style>
+  html { background: #2c3428; }
+  body { margin: 0; min-height: 100svh; display: grid; place-items: center; }
+  [hidden] { display: none !important; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .phone {
+    position: relative;
+    isolation: isolate;
+    container-type: inline-size;
+    width: min(100%, 430px, calc(100svh * 402 / 874));
+    aspect-ratio: 402 / 874;
+    overflow: hidden;
+    background: #849168 url("artboard.jpg") center / 100% 100%;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .pd-dial { position: absolute; inset: 0; pointer-events: none; touch-action: pan-y; user-select: none; }
+  .pd-hit { position: absolute; inset: 73% 0 10%; pointer-events: auto; touch-action: pan-y; cursor: grab; }
+  .pd-ribbon { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .pd-avatars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+  .pd-avatar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 12.69cqw;
+    min-width: 40px;
+    aspect-ratio: 1;
+    transform: translate3d(var(--avatar-x), var(--avatar-y), 0) translate(-50%, -50%) scale(var(--avatar-scale, 1));
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    background: transparent;
+    cursor: grab;
+    touch-action: pan-y;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pd-dial:active .pd-avatar, .pd-hit:active { cursor: grabbing; }
+  .pd-avatar img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 50%;
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+  .pd-avatar[data-centered="true"] img { box-shadow: 0 0 0 2px #e8bd60; }
+  .pd-avatar:focus-visible, .pd-paw:focus-visible { outline: 2px solid #ffe9a4; outline-offset: 2px; }
+  .pd-paw {
+    position: absolute;
+    inset: auto auto 1.5% 36.3%;
+    width: 27.4%;
+    height: 12.4%;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pd-result {
+    position: absolute;
+    bottom: 14.7%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 7px 12px;
+    border-radius: 20px;
+    color: #fff9ec;
+    background: #403b26e8;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<main id="portrait-open-arc" class="phone" aria-label="Besideo 四宠物画板">
+  <div id="pet-arc" class="pd-dial" aria-label="沿弧线拨动选择宠物">
+    <div class="pd-hit" aria-hidden="true"></div>
+    <svg class="pd-ribbon" viewBox="0 0 402 874" aria-hidden="true">
+      <defs>
+        <linearGradient id="pastel-spectrum" x1="0%" x2="100%" y1="50%" y2="50%">
+          <stop offset="0" stop-color="#F9C7D1" stop-opacity="0"/>
+          <stop offset=".11" stop-color="#F9C7D1" stop-opacity="0"/>
+          <stop offset=".13" stop-color="#F9C7D1" stop-opacity=".12"/>
+          <stop offset=".22" stop-color="#F9CAD2" stop-opacity=".88"/>
+          <stop offset=".34" stop-color="#FFDDC3" stop-opacity=".83"/>
+          <stop offset=".45" stop-color="#FFEEB9" stop-opacity=".66"/>
+          <stop offset=".55" stop-color="#E0F1D8" stop-opacity=".66"/>
+          <stop offset=".65" stop-color="#C2EAEA" stop-opacity=".83"/>
+          <stop offset=".74" stop-color="#C4E2FB" stop-opacity=".94"/>
+          <stop offset=".82" stop-color="#DDD5F6" stop-opacity=".86"/>
+          <stop offset=".88" stop-color="#E6D5F4" stop-opacity=".12"/>
+          <stop offset=".89" stop-color="#E6D5F4" stop-opacity="0"/>
+          <stop offset="1" stop-color="#E6D5F4" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="soft-arc-edge" x="-5%" y="-8%" width="110%" height="116%">
+          <feGaussianBlur stdDeviation="2"/>
+        </filter>
+      </defs>
+      <path d="M4 799.75 C34.04 720.08 113.03 667 201.5 667 C289.97 667 368.96 720.08 399 799.75 L374.52 808.21 C348.20 738.43 279.01 691.90 201.5 691.90 C123.99 691.90 54.80 738.43 28.49 808.21 Z" fill="url(#pastel-spectrum)" filter="url(#soft-arc-edge)"/>
+    </svg>
+    <div class="pd-avatars"></div>
+    <span class="sr-only" role="status"></span>
+  </div>
+  <button type="button" class="pd-paw" aria-label="展开或收起 Portrait" aria-expanded="true" aria-controls="pet-arc"></button>
+  <output class="pd-result" hidden></output>
+</main>
+<script>
+(() => {
+  const root = document.getElementById('portrait-open-arc');
+  const pets = [{"name": "Milo", "image": "pets/milo.png"}, {"name": "Mimi", "image": "pets/mimi.png"}, {"name": "Ollie", "image": "pets/ollie.png"}, {"name": "Orien", "image": "pets/orien.png"}, {"name": "Sunny", "image": "pets/sunny.png"}, {"name": "Pumpkin", "image": "pets/pumpkin.png"}, {"name": "Maple", "image": "pets/maple.png"}, {"name": "Pip", "image": "pets/pip.png"}];
+  const dial = root.querySelector('.pd-dial');
+  const paw = root.querySelector('.pd-paw');
+  const counter = root.querySelector('[role="status"]');
+  const result = root.querySelector('.pd-result');
+  const avatars = root.querySelector('.pd-avatars');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const wrap = n => ((n % pets.length) + pets.length) % pets.length;
+  const canvasWidth = 402;
+  const canvasHeight = 874;
+  const radius = 203.4;
+  const centerY = 888;
+  const stepAngle = .463;
+  const join = 1.5;
+  const joinAngle = join * stepAngle;
+  const joinX = radius * Math.sin(joinAngle);
+  const joinY = centerY - radius * Math.cos(joinAngle);
+  const tangentX = radius * Math.cos(joinAngle) * stepAngle;
+  const tangentY = radius * Math.sin(joinAngle) * stepAngle;
+  const tailPitch = 35;
+  const tailDrop = 43;
+  const slotOffset = .5;
+  let center = 1;
+  let position = center;
+  let lastVisited = -1;
+  let motionFrame = 0;
+  let paintFrame = 0;
+  let hintTimer;
+  let drag = null;
+  let suppressClick = false;
+
+  const buttons = pets.map((pet, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'pd-avatar';
+    button.setAttribute('aria-label', '进入 ' + pet.name + ' 的 Portrait');
+    const img = document.createElement('img');
+    img.src = pet.image;
+    img.alt = '';
+    img.draggable = false;
+    button.append(img);
+    button.addEventListener('click', () => {
+      stopMotion();
+      lastVisited = center = position = index;
+      update();
+      setOpen(false);
+      result.textContent = pet.name + ' · Portrait';
+      result.hidden = false;
+      paw.focus({preventScroll:true});
+    });
+    avatars.append(button);
+    return button;
+  });
+
+  // Match the four Figma positions on the upper arc, then continue each end outward.
+  function track(relative) {
+    const offset = Math.abs(relative);
+    const direction = Math.sign(relative);
+    if (offset <= join) {
+      const angle = relative * stepAngle;
+      return {x: canvasWidth / 2 + radius * Math.sin(angle), y: centerY - radius * Math.cos(angle)};
+    }
+
+    const beyond = offset - join;
+    const continuationX = tailPitch * beyond + (tangentX - tailPitch) * (1 - Math.exp(-4 * beyond)) / 4;
+    const continuationY = tailDrop * (1 - Math.exp(-beyond * tangentY / tailDrop));
+    return {
+      x: canvasWidth / 2 + direction * (joinX + continuationX),
+      y: joinY + continuationY
+    };
+  }
+
+  function projectPointer(clientX, bounds) {
+    const x = (clientX - bounds.left) / bounds.width * canvasWidth - canvasWidth / 2;
+    const distance = Math.abs(x);
+    if (distance <= joinX) return Math.asin(x / radius) / stepAngle;
+    let low = join;
+    let high = join + (distance - joinX) / tailPitch + 1;
+    for (let iteration = 0; iteration < 13; iteration++) {
+      const candidate = (low + high) / 2;
+      if (track(candidate).x - canvasWidth / 2 < distance) low = candidate;
+      else high = candidate;
+    }
+    return Math.sign(x) * (low + high) / 2;
+  }
+
+  function update() {
+    buttons.forEach((button, index) => {
+      const relative = wrap(index - position - slotOffset + pets.length / 2) - pets.length / 2;
+      const distance = Math.abs(relative);
+      const actionable = distance < 1.85;
+      const hidden = distance > 3.85;
+      if (button.hidden !== hidden) button.hidden = hidden;
+      if (hidden) return;
+
+      const point = track(relative);
+      const edge = Math.min(1, Math.max(0, distance - join));
+      button.style.setProperty('--avatar-x', point.x / canvasWidth * 100 + 'cqw');
+      button.style.setProperty('--avatar-y', point.y / canvasWidth * 100 + 'cqw');
+      button.style.setProperty('--avatar-scale', 1 - .32 * edge);
+      button.style.opacity = 1 - .31 * edge;
+      button.style.pointerEvents = actionable ? 'auto' : 'none';
+      const tabIndex = actionable ? 0 : -1;
+      if (button.tabIndex !== tabIndex) {
+        button.tabIndex = tabIndex;
+        button.setAttribute('aria-hidden', String(!actionable));
+      }
+      button.dataset.centered = String(index === lastVisited);
+    });
+  }
+
+  function announceCenter() {
+    counter.textContent = pets[wrap(center)].name;
+  }
+
+  function setOpen(open) {
+    dial.hidden = !open;
+    result.hidden = true;
+    paw.setAttribute('aria-expanded', String(open));
+  }
+
+  function stopMotion() {
+    clearTimeout(hintTimer);
+    cancelAnimationFrame(motionFrame);
+    cancelAnimationFrame(paintFrame);
+    paintFrame = 0;
+  }
+
+  function drawOnNextFrame() {
+    if (paintFrame) return;
+    paintFrame = requestAnimationFrame(() => {
+      paintFrame = 0;
+      update();
+    });
+  }
+
+  function settle(target, velocity = 0) {
+    stopMotion();
+    center = target;
+    announceCenter();
+    if (reducedMotion.matches || Math.abs(target - position) < .002) {
+      center = position = wrap(target);
+      update();
+      return;
+    }
+
+    const start = position;
+    const distance = target - start;
+    const duration = Math.min(335, 205 + 95 * Math.abs(distance));
+    const slope = Math.max(0, Math.min(2.4, velocity * duration / distance));
+    const started = performance.now();
+    function animate(now) {
+      const t = Math.min((now - started) / duration, 1);
+      const progress = t * t * (3 - 2 * t) + slope * t * (1 - t) ** 2;
+      position = start + distance * progress;
+      update();
+      if (t < 1) motionFrame = requestAnimationFrame(animate);
+      else center = position = wrap(target);
+    }
+    motionFrame = requestAnimationFrame(animate);
+  }
+
+  paw.addEventListener('click', () => {
+    const open = dial.hidden;
+    stopMotion();
+    position = center = wrap(center);
+    update();
+    setOpen(open);
+  });
+
+  dial.addEventListener('pointerdown', event => {
+    if (!event.isPrimary || event.button !== 0) return;
+    stopMotion();
+    suppressClick = false;
+    const bounds = dial.getBoundingClientRect();
+    drag = {
+      id: event.pointerId,
+      bounds,
+      startX: event.clientX,
+      projected: projectPointer(event.clientX, bounds),
+      active: false,
+      pending: 0,
+      time: event.timeStamp,
+      velocity: 0
+    };
+  });
+
+  dial.addEventListener('pointermove', event => {
+    if (!drag || event.pointerId !== drag.id) return;
+    const next = projectPointer(event.clientX, drag.bounds);
+    const step = drag.projected - next;
+    drag.projected = next;
+    drag.pending += step;
+
+    const elapsed = Math.max(1, event.timeStamp - drag.time);
+    drag.time = event.timeStamp;
+    const speed = Math.max(-.014, Math.min(.014, step / elapsed));
+    drag.velocity = drag.velocity * .25 + speed * .75;
+    if (!drag.active && Math.abs(drag.startX - event.clientX) < 5) return;
+    if (!drag.active) {
+      drag.active = true;
+      dial.setPointerCapture(event.pointerId);
+    }
+    position += drag.pending;
+    drag.pending = 0;
+    drawOnNextFrame();
+  });
+
+  function release(event) {
+    if (!drag || event.pointerId !== drag.id) return;
+    const {active, time, velocity} = drag;
+    drag = null;
+    suppressClick = active;
+    const speed = active && event.type !== 'pointercancel' && event.timeStamp - time < 80 ? velocity : 0;
+    const coast = reducedMotion.matches ? 0 : Math.max(-.37, Math.min(.37, speed * 88));
+    settle(Math.round(position + coast), speed);
+  }
+  dial.addEventListener('pointerup', release);
+  dial.addEventListener('pointercancel', release);
+  dial.addEventListener('lostpointercapture', release);
+  dial.addEventListener('click', event => {
+    if (suppressClick && event.detail !== 0) {
+      event.stopPropagation();
+      suppressClick = false;
+    }
+  }, true);
+  dial.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    settle(center + (event.key === 'ArrowRight' ? 1 : -1));
+    if (event.target.classList.contains('pd-avatar')) buttons[wrap(center)].focus({preventScroll:true});
+  });
+
+  update();
+  announceCenter();
+
+  // A small once-per-load preview shows the direction of movement without adding controls.
+  if (!reducedMotion.matches) {
+    hintTimer = setTimeout(() => {
+      const started = performance.now();
+      function hint(now) {
+        const t = Math.min((now - started) / 720, 1);
+        position = center + .17 * Math.sin(t * Math.PI) ** 2;
+        update();
+        if (t < 1) motionFrame = requestAnimationFrame(hint);
+      }
+      motionFrame = requestAnimationFrame(hint);
+    }, 540);
+  }
+})();
+</script>
+</body>
+</html>
