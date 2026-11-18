@@ -57,6 +57,8 @@
   pets.length = count;
   const rotary = count > 2;
   const showOverflow = count > 3;
+  const singlePreview = count === 4;
+  const wrapOffset = singlePreview ? 1.5 : count / 2;
   const ring = root.querySelector('.pd-ring');
   const dial = root.querySelector('.pd-dial');
   const paw = root.querySelector('.pd-paw');
@@ -99,29 +101,16 @@
     return button;
   });
 
-  // A short pet list can come back into view at the opposite edge.
-  // Its repeated image is a visual hint, with no second activation target.
-  const repeated = showOverflow && count < 5 ? pets.map(pet => {
-    const preview = document.createElement('div');
-    preview.className = 'pd-avatar';
-    preview.setAttribute('aria-hidden', 'true');
-    const img = document.createElement('img');
-    img.src = pet.image;
-    img.alt = '';
-    preview.append(img);
-    avatars.append(preview);
-    return preview;
-  }) : [];
-
-  function place(avatar, relative, repeat = false) {
+  function place(avatar, relative) {
     const distance = Math.abs(relative);
-    const edge = Math.min(1, Math.max(0, distance - 1));
+    const showEdge = showOverflow && (!singlePreview || relative > 0);
+    const edge = showEdge ? Math.min(1, Math.max(0, distance - 1)) : 0;
     const angle = Math.sign(relative) * (Math.min(distance, 1) * slotAngle + Math.max(0, distance - 1) * .58);
     const radius = 20.5 + 5.3 * edge;
     const scale = 1 - .46 * edge;
-    const fadeAt = showOverflow ? 2.35 : 1.5;
+    const fadeAt = showEdge ? 2.35 : 1.5;
     const opacity = (1 - .39 * edge) * Math.min(1, Math.max(0, (fadeAt - distance) / .35));
-    const actionable = !repeat && distance < 1.5;
+    const actionable = distance < 1.5;
     avatar.hidden = opacity === 0;
     if (avatar.hidden) return;
     avatar.style.transform = 'translate(calc(-50% + ' + Math.sin(angle) * radius + 'cqw), calc(50% - ' + Math.cos(angle) * (radius - 1.4) + 'cqw)) scale(' + scale + ')';
@@ -135,9 +124,8 @@
 
   function update() {
     buttons.forEach((button, index) => {
-      const relative = rotary ? wrap(index - position + count / 2) - count / 2 : index === 0 ? -.68 : .68;
+      const relative = rotary ? wrap(index - position + wrapOffset) - wrapOffset : index === 0 ? -.68 : .68;
       place(button, relative);
-      if (repeated[index]) place(repeated[index], relative < 0 ? relative + count : relative - count, true);
     });
     const indicator = rotary ? 0 : (center === 0 ? -.68 : .68) * slotAngle;
     spoke.style.transform = 'rotate(' + indicator + 'rad)';
