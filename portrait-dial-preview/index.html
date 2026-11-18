@@ -34,7 +34,7 @@
 #besideo-rotary-portrait .pd-dial { position: absolute; inset: auto 22% 2% 22%; height: 44cqw; touch-action: none; user-select: none; }
 #besideo-rotary-portrait .pd-ring { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 36cqw; aspect-ratio: 1; border-radius: 50%; border: 1px solid #e5c464bf; background: radial-gradient(circle at 52% 41%, #f3df7b09 47%, #e2bf4a50 100%); box-shadow: inset 0 0 12px #e8c85b48; pointer-events: none; overflow: hidden; }
 #besideo-rotary-portrait .pd-spoke { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from -11deg, #ffdf7566 0deg, #ffdf7533 22deg, transparent 22deg); }
-#besideo-rotary-portrait .pd-avatar { position: absolute; bottom: 18cqw; left: 50%; width: clamp(44px,12.5cqw,49px); height: clamp(44px,12.5cqw,49px); margin: 0; padding: 0; border: 0; background: transparent; border-radius: 50%; user-select: none; -webkit-user-drag: none; touch-action: none; }
+#besideo-rotary-portrait .pd-avatar { position: absolute; bottom: 18cqw; left: 50%; width: clamp(44px,12.5cqw,49px); height: clamp(44px,12.5cqw,49px); margin: 0; padding: 0; border: 0; background: transparent; border-radius: 50%; transform-origin: center; user-select: none; -webkit-user-drag: none; touch-action: none; }
 #besideo-rotary-portrait .pd-avatar img { box-sizing: border-box; width: 100%; height: 100%; border-radius: 50%; border: 2px solid #fffcef; object-fit: cover; box-shadow: 0 2px 6px #19180e69; pointer-events: none; }
 #besideo-rotary-portrait .pd-avatar[data-centered="true"] img { border: 3px solid #e7bb57; }
 #besideo-rotary-portrait .pd-paw-art { position: absolute; inset: 0; background: var(--pd-home) center / 100% 100%; clip-path: polygon(39% 90%, 42% 88%, 46% 87.4%, 54% 87.4%, 59% 88.2%, 61.2% 90.8%, 58% 94.8%, 56.5% 96.3%, 50% 97.1%, 43.3% 96.5%, 40.2% 94.4%); pointer-events: none; }
@@ -58,7 +58,9 @@
   let center = 1;
   let position = center;
   let lastVisited = -1;
-  let frame = 0;
+  let motionFrame = 0;
+  let paintFrame = 0;
+  let hintTimer;
   let drag = null;
   let suppressClick = false;
 
@@ -74,7 +76,7 @@
     img.draggable = false;
     button.append(img);
     button.addEventListener('click', () => {
-      cancelAnimationFrame(frame);
+      stopMotion();
       lastVisited = center = position = index;
       update();
       setOpen(false);
@@ -91,13 +93,24 @@
     let highlightOpacity = 0;
     buttons.forEach((button, index) => {
       const relative = wrap(index - position + pets.length / 2) - pets.length / 2;
-      const angle = relative * slotAngle;
-      const visibility = Math.min(1, Math.max(0, (1.58 - Math.abs(relative)) / 0.52));
-      button.hidden = visibility === 0;
-      button.style.transform = 'translate(calc(-50% + ' + (Math.sin(angle) * 19.6) + 'cqw), calc(50% - ' + (Math.cos(angle) * 19.6) + 'cqw))';
+      const distance = Math.abs(relative);
+      const edge = Math.max(0, distance - 1);
+      const angle = relative * slotAngle / (1 + .39 * edge ** 2);
+      const outer = Math.min(1, edge);
+      const scale = 1 - .39 * outer;
+      const visibility = (1 - .49 * outer) * Math.min(1, Math.max(0, (2.35 - distance) / .35));
+      const actionable = distance < 1.45;
+      const hidden = visibility === 0;
+      if (button.hidden !== hidden) button.hidden = hidden;
+      if (hidden) return;
+      button.style.transform = 'translate(calc(-50% + ' + (Math.sin(angle) * 19.6) + 'cqw), calc(50% - ' + (Math.cos(angle) * 19.6) + 'cqw)) scale(' + scale + ')';
       button.style.opacity = visibility;
-      button.style.pointerEvents = visibility < .68 ? 'none' : '';
-      button.tabIndex = visibility < .68 ? -1 : 0;
+      button.style.pointerEvents = actionable ? '' : 'none';
+      const tabIndex = actionable ? 0 : -1;
+      if (button.tabIndex !== tabIndex) {
+        button.tabIndex = tabIndex;
+        button.setAttribute('aria-hidden', String(!actionable));
+      }
       const highlighted = index === lastVisited;
       button.dataset.centered = String(highlighted);
       if (highlighted) {
@@ -119,28 +132,55 @@
     paw.setAttribute('aria-expanded', String(open));
   }
 
-  function settle(target) {
-    cancelAnimationFrame(frame);
+  function stopMotion() {
+    clearTimeout(hintTimer);
+    cancelAnimationFrame(motionFrame);
+    cancelAnimationFrame(paintFrame);
+    paintFrame = 0;
+  }
+
+  function drawOnNextFrame() {
+    if (paintFrame) return;
+    paintFrame = requestAnimationFrame(() => {
+      paintFrame = 0;
+      update();
+    });
+  }
+
+  function settle(target, velocity = 0) {
+    stopMotion();
     center = target;
     announceCenter();
-    if (reducedMotion.matches || target === position) {
+    if (reducedMotion.matches || Math.abs(target - position) < .002) {
       center = position = wrap(target);
       update();
       return;
     }
+
     const start = position;
+    const distance = target - start;
+    const duration = Math.min(335, 205 + 95 * Math.abs(distance));
+    const slope = Math.max(0, Math.min(2.4, velocity * duration / distance));
     const started = performance.now();
     function animate(now) {
-      const t = Math.min((now - started) / 185, 1);
-      position = start + (target - start) * (1 - (1 - t) ** 3);
+      const t = Math.min((now - started) / duration, 1);
+      const progress = t * t * (3 - 2 * t) + slope * t * (1 - t) ** 2;
+      position = start + distance * progress;
       update();
-      if (t < 1) frame = requestAnimationFrame(animate);
+      if (t < 1) motionFrame = requestAnimationFrame(animate);
       else center = position = wrap(target);
     }
-    frame = requestAnimationFrame(animate);
+    motionFrame = requestAnimationFrame(animate);
   }
 
-  paw.addEventListener('click', () => setOpen(dial.hidden));
+  paw.addEventListener('click', () => {
+    const open = dial.hidden;
+    stopMotion();
+    position = center = wrap(center);
+    update();
+    setOpen(open);
+  });
+
   function polar(event, geometry) {
     const x = event.clientX - geometry.x;
     const y = event.clientY - geometry.y;
@@ -155,9 +195,9 @@
     const onAvatar = event.target.closest('.pd-avatar');
     if (!onAvatar && (point.radius < geometry.radius * .68 || point.radius > geometry.radius * 1.36)) return;
 
-    cancelAnimationFrame(frame);
+    stopMotion();
     suppressClick = false;
-    drag = {id: event.pointerId, geometry, angle: point.angle, active: false, pending: 0};
+    drag = {id: event.pointerId, geometry, angle: point.angle, active: false, pending: 0, time: event.timeStamp, velocity: 0};
     if (!onAvatar) dial.setPointerCapture(event.pointerId);
   });
 
@@ -166,29 +206,38 @@
     const point = polar(event, drag.geometry);
     if (point.radius < drag.geometry.radius * .43) {
       drag.angle = null;
+      drag.velocity = 0;
+      drag.time = event.timeStamp;
       return;
     }
 
     // Accumulate the shortest angular change so crossing the angle discontinuity does not jump.
     const delta = point.angle - (drag.angle ?? point.angle);
     drag.angle = point.angle;
-    drag.pending += Math.atan2(Math.sin(delta), Math.cos(delta));
-    if (!drag.active && Math.abs(drag.pending) < .12) return;
+    const step = -Math.atan2(Math.sin(delta), Math.cos(delta)) / slotAngle;
+    drag.pending += step;
+    const elapsed = Math.max(1, event.timeStamp - drag.time);
+    drag.time = event.timeStamp;
+    const speed = Math.max(-.014, Math.min(.014, step / elapsed));
+    drag.velocity = drag.velocity * .25 + speed * .75;
+    if (!drag.active && Math.abs(drag.pending) < .065) return;
     if (!drag.active) {
       drag.active = true;
       dial.setPointerCapture(event.pointerId);
     }
-    position -= drag.pending / slotAngle;
+    position += drag.pending;
     drag.pending = 0;
-    update();
+    drawOnNextFrame();
   });
 
   function release(event) {
     if (!drag || event.pointerId !== drag.id) return;
-    const wasActive = drag.active;
+    const {active, time, velocity} = drag;
     drag = null;
-    suppressClick = wasActive;
-    settle(Math.round(position));
+    suppressClick = active;
+    const speed = active && event.type !== 'pointercancel' && event.timeStamp - time < 80 ? velocity : 0;
+    const coast = reducedMotion.matches ? 0 : Math.max(-.57, Math.min(.57, speed * 88));
+    settle(Math.round(position + coast), speed);
   }
   dial.addEventListener('pointerup', release);
   dial.addEventListener('pointercancel', release);
@@ -208,6 +257,20 @@
 
   update();
   announceCenter();
+
+  // A small once-per-load preview shows the direction of movement without adding controls.
+  if (!reducedMotion.matches) {
+    hintTimer = setTimeout(() => {
+      const started = performance.now();
+      function hint(now) {
+        const t = Math.min((now - started) / 720, 1);
+        position = center + .17 * Math.sin(t * Math.PI) ** 2;
+        update();
+        if (t < 1) motionFrame = requestAnimationFrame(hint);
+      }
+      motionFrame = requestAnimationFrame(hint);
+    }, 540);
+  }
 })();
 </script>
 </body>
